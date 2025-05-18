@@ -1,0 +1,43 @@
+﻿.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #222;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+.logo-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-btn {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #ff4500;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+    nav ul li {
+        padding: 15px;
+        cursor: pointer;
+    }
+
+.bottom-section {
+    text-align: center;
+    padding-bottom: 20px;
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "id": "1",
+    "generated_at": "2025-05-07T16:00:00",
+    "content": "Detected multiple SQL injection attempts from internal network. IP blocked.",
+    "severity_level": "High",
+    "user_id": "admin1"
+  },
+  {
+    "id": "2",
+    "generated_at": "2025-05-07T17:30:00",
+    "content": "High-volume UDP traffic consistent with DDoS pattern. Blocking applied.",
+    "severity_level": "Critical",
+    "user_id": "admin2"
+  },
+  {
+    "id": "3",
+    "generated_at": "2025-05-08T08:00:00",
+    "content": "Port scan detected. No intrusion occurred. Notified administrator.",
+    "severity_level": "Medium",
+    "user_id": "admin1"
+  }
+]
+

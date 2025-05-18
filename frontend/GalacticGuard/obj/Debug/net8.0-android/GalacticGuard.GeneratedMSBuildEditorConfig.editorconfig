@@ -1,0 +1,96 @@
+is_global = true
+build_property.EnableAotAnalyzer = 
+build_property.EnableSingleFileAnalyzer = true
+build_property.EnableTrimAnalyzer = false
+build_property.IncludeAllContentForSelfExtract = 
+build_property.MvvmToolkitEnableINotifyPropertyChangingSupport = true
+build_property._MvvmToolkitIsUsingWindowsRuntimePack = false
+build_property.CsWinRTComponent = 
+build_property.CsWinRTAotOptimizerEnabled = 
+build_property.CsWinRTAotWarningLevel = 
+build_property.TargetFramework = net8.0-android
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = GalacticGuard
+build_property.ProjectDir = C:\Users\Magshimim\Documents\magshimim\final\network_scanner\frontend\GalacticGuard\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
+
+[C:/Users/Magshimim/Documents/magshimim/final/network_scanner/frontend/GalacticGuard/App.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GalacticGuard.App.xaml
+build_metadata.AdditionalFiles.TargetPath = App.xaml
+build_metadata.AdditionalFiles.RelativePath = App.xaml
+
+[C:/Users/Magshimim/Documents/magshimim/final/network_scanner/frontend/GalacticGuard/AppShell.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GalacticGuard.AppShell.xaml
+build_metadata.AdditionalFiles.TargetPath = AppShell.xaml
+build_metadata.AdditionalFiles.RelativePath = AppShell.xaml
+
+[C:/Users/Magshimim/Documents/magshimim/final/network_scanner/frontend/GalacticGuard/MainPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GalacticGuard.MainPage.xaml
+build_metadata.AdditionalFiles.TargetPath = MainPage.xaml
+build_metadata.AdditionalFiles.RelativePath = MainPage.xaml
+
+[C:/Users/Magshimim/Documents/magshimim/final/network_scanner/frontend/GalacticGuard/Resources/Styles/Colors.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GalacticGuard.Resources.Styles.Colors.xaml
+build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Colors.xaml
+build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Colors.xaml
+
+[C:/Users/Magshimim/Documents/magshimim/final/network_scanner/frontend/GalacticGuard/Resources/Styles/Styles.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GalacticGuard.Resources.Styles.Styles.xaml
+build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Styles.xaml
+build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Styles.xaml
+
+[C:/Users/Magshimim/Documents/magshimim/final/network_scanner/frontend/GalacticGuard/Views/AnalyticsView.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GalacticGuard.Views.AnalyticsView.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\AnalyticsView.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\AnalyticsView.xaml
+
+[C:/Users/Magshimim/Documents/magshimim/final/network_scanner/frontend/GalacticGuard/Views/DashboardView.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GalacticGuard.Views.DashboardView.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\DashboardView.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\DashboardView.xaml
+
+[C:/Users/Magshimim/Documents/magshimim/final/network_scanner/frontend/GalacticGuard/Views/LogsView.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GalacticGuard.Views.LogsView.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\LogsView.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\LogsView.xaml
+
+[C:/Users/Magshimim/Documents/magshimim/final/network_scanner/frontend/GalacticGuard/Views/NotificationsView.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GalacticGuard.Views.NotificationsView.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\NotificationsView.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\NotificationsView.xaml
+
+[C:/Users/Magshimim/Documents/magshimim/final/network_scanner/frontend/GalacticGuard/Views/SettingsView.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GalacticGuard.Views.SettingsView.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\SettingsView.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\SettingsView.xaml
+
+[C:/Users/Magshimim/Documents/magshimim/final/network_scanner/frontend/GalacticGuard/Resources/Styles/Dashboard.css]
+build_metadata.AdditionalFiles.GenKind = Css
+build_metadata.AdditionalFiles.ManifestResourceName = GalacticGuard.Resources.Styles.Dashboard.css
+build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Dashboard.css
+build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Dashboard.css
+
+[C:/Users/Magshimim/Documents/magshimim/final/network_scanner/frontend/GalacticGuard/Resources/Styles/Sidebar.css]
+build_metadata.AdditionalFiles.GenKind = Css
+build_metadata.AdditionalFiles.ManifestResourceName = GalacticGuard.Resources.Styles.Sidebar.css
+build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Sidebar.css
+build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Sidebar.css

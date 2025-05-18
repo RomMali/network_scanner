@@ -1,0 +1,39 @@
+[
+  {
+    "id": 1,
+    "source_ip": "192.168.1.10",
+    "destination_ip": "10.0.0.5",
+    "attack_type": "SQL Injection",
+    "protocol": "HTTP",
+    "payload": "' OR '1'='1",
+    "severity_level": "High",
+    "geolocation": "New York, USA",
+    "timestamp": "2025-05-07T14:32:00",
+    "response_action": "Blocked"
+  },
+  {
+    "id": 2,
+    "source_ip": "172.16.0.2",
+    "destination_ip": "10.0.0.8",
+    "attack_type": "Port Scan",
+    "protocol": "TCP",
+    "payload": "SYN scan",
+    "severity_level": "Medium",
+    "geolocation": "Berlin, Germany",
+    "timestamp": "2025-05-07T15:45:00",
+    "response_action": "Alerted"
+  },
+  {
+    "id": 3,
+    "source_ip": "203.0.113.22",
+    "destination_ip": "10.0.0.12",
+    "attack_type": "DDoS",
+    "protocol": "UDP",
+    "payload": "Flood",
+    "severity_level": "Critical",
+    "geolocation": "Tokyo, Japan",
+    "timestamp": "2025-05-08T01:12:00",
+    "response_action": "Blocked"
+  }
+]
+

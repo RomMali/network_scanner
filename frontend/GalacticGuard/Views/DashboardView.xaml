@@ -1,0 +1,62 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GalacticGuard.Views.DashboardView"
+             xmlns:local="clr-namespace:GalacticGuard.ViewModels"
+             Title="Dashboard">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Settings" IconImageSource="settings.png" />
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <Grid>
+            <WebView x:Name="DashboardWebView" />
+        </Grid>
+    </ContentPage.Content>
+
+    <!--<StackLayout Padding="20" Spacing="10">
+        <Button Text="{Binding ButtonText}" 
+            Command="{Binding ToggleServiceCommand}"
+            BackgroundColor="{Binding ButtonColor}" 
+            IsEnabled="{Binding IsButtonEnabled}" />
+
+        <Label Text="{Binding ErrorMessage}" 
+           TextColor="Red" 
+           FontSize="14"
+           HorizontalOptions="Center" />
+
+        <Button Text="View Logs"
+                Command="{Binding ViewLogsCommand}" />
+
+        <Label Text="{Binding LogContent}" 
+               x:Name="LogLabel"
+               LineBreakMode="WordWrap" />
+    </StackLayout>-->
+
+
+
+    <!--<StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+        <Button Text="{Binding ButtonText}" 
+                BackgroundColor="{Binding ButtonColor}" 
+                Command="{Binding ToggleServiceCommand}" 
+                IsEnabled="{Binding IsButtonEnabled}"/>
+    </StackLayout>-->
+
+</ContentPage>
+
+
+
+
+<!--<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GalacticGuard.Views.DashboardView">
+
+    --><!-- Toolbar Item --><!--
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Settings" IconImageSource="settings.png" />
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <Grid>
+            <WebView x:Name="DashboardWebView" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>-->
