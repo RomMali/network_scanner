@@ -1,62 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GalacticGuard.Views.DashboardView"
-             xmlns:local="clr-namespace:GalacticGuard.ViewModels"
              Title="Dashboard">
-
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Settings" IconImageSource="settings.png" />
-    </ContentPage.ToolbarItems>
-    <ContentPage.Content>
-        <Grid>
-            <WebView x:Name="DashboardWebView" />
-        </Grid>
-    </ContentPage.Content>
-
-    <!--<StackLayout Padding="20" Spacing="10">
-        <Button Text="{Binding ButtonText}" 
-            Command="{Binding ToggleServiceCommand}"
-            BackgroundColor="{Binding ButtonColor}" 
-            IsEnabled="{Binding IsButtonEnabled}" />
-
-        <Label Text="{Binding ErrorMessage}" 
-           TextColor="Red" 
-           FontSize="14"
-           HorizontalOptions="Center" />
-
-        <Button Text="View Logs"
-                Command="{Binding ViewLogsCommand}" />
-
-        <Label Text="{Binding LogContent}" 
-               x:Name="LogLabel"
-               LineBreakMode="WordWrap" />
-    </StackLayout>-->
-
-
-
-    <!--<StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-        <Button Text="{Binding ButtonText}" 
-                BackgroundColor="{Binding ButtonColor}" 
-                Command="{Binding ToggleServiceCommand}" 
-                IsEnabled="{Binding IsButtonEnabled}"/>
-    </StackLayout>-->
-
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="12">
+            <Label Text="{Binding UserLabel, StringFormat='Operator: {0}'}"/>
+            <Label Text="{Binding ModeLabel, StringFormat='Mode: {0}'}" FontAttributes="Bold"/>
+            <Label Text="{Binding ServiceStatus, StringFormat='IPS: {0}'}" TextColor="{Binding ServiceColor}" FontSize="22"/>
+            <Label Text="{Binding FailOpen}"/>
+            <Label Text="{Binding DropCount, StringFormat='Drops: {0}'}"/>
+            <Label Text="{Binding AcceptCount, StringFormat='Accepts: {0}'}"/>
+            <Label Text="{Binding AlertCount, StringFormat='Alerts: {0}'}"/>
+            <Label Text="{Binding LastDrop, StringFormat='Last drop: {0}'}"/>
+            <Button Text="Start / Stop IPS" Command="{Binding ToggleIpsCommand}"/>
+            <Button Text="Logout" Command="{Binding LogoutCommand}"/>
+            <Label Text="{Binding ErrorMessage}" TextColor="Red"/>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
-
-
-
-
-<!--<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="GalacticGuard.Views.DashboardView">
-
-    --><!-- Toolbar Item --><!--
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Settings" IconImageSource="settings.png" />
-    </ContentPage.ToolbarItems>
-    <ContentPage.Content>
-        <Grid>
-            <WebView x:Name="DashboardWebView" />
-        </Grid>
-    </ContentPage.Content>
-</ContentPage>-->

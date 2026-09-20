@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "username": "advuser",
+        "password_hash": "$2b$12$pUUbtz0lVh1O/5f9LjjXZOGlu4kTG09G3WrMmqJs56zGOPneoWyhW",
+        "advanced_mode": true
+    },
+    {
+        "id": 2,
+        "username": "stduser",
+        "password_hash": "$2b$12$Hl2w24CApbJz6bhFcw6eGeSE2EkVbtjoE51mdVJRC9NE.zt2fmHqi",
+        "advanced_mode": false
+    },
+    {
+        "id": 3,
+        "username": "admin",
+        "password_hash": "$2b$12$mKMff/x6XgxEKWboMOTixuw5l2JyIPQPTgS.Z5vj7cu/K9YI3IHua",
+        "advanced_mode": false
+    },
+    {
+        "id": 4,
+        "username": "netadmin",
+        "password_hash": "$2b$12$/y18Pjg3Jmw5xr2.rDBgaeboZ4iP81T0gxS9Hew6jZyk.r58XSO3i",
+        "advanced_mode": true
+    }
+]

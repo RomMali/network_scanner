@@ -1,166 +1,108 @@
-﻿using System;
-using System.IO;
-using System.Net.Http;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Microsoft.Maui.Graphics;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using GalacticGuard.Services;
+using Microsoft.Maui.Graphics;
 
-public partial class LogsViewModel : ObservableObject
+namespace GalacticGuard.ViewModels
 {
-    private readonly HttpClient _httpClient = new();
-    private readonly string logFilePath;
-    private Timer logRefreshTimer;
-    private Timer statusRefreshTimer;
-
-    // 🟢 Observable Properties (Notify UI)
-    [ObservableProperty] private string logContent;
-    [ObservableProperty] private string filteredLogContent;
-    [ObservableProperty] private string searchText;
-    [ObservableProperty] private string serviceStatus = "Checking...";
-    [ObservableProperty] private Color serviceColor = Colors.Gray;
-
-    // Commands
-    public ICommand StartServiceCommand { get; }
-    public ICommand StopServiceCommand { get; }
-
-    public LogsViewModel()
+    public partial class LogsViewModel : ObservableObject
     {
-        string basePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string logDir = Path.Combine(basePath, "GalacticGuard");
-        logFilePath = Path.Combine(logDir, "service.log");
+        private readonly IpsApiClient _api;
+        private IDispatcherTimer? _timer;
 
-        EnsureLogFileExists(logDir, logFilePath);
+        [ObservableProperty] private string logContent = "Loading...";
+        [ObservableProperty] private string filteredLogContent = string.Empty;
+        [ObservableProperty] private string searchText = string.Empty;
+        [ObservableProperty] private string serviceStatus = "Checking...";
+        [ObservableProperty] private Color serviceColor = Colors.Gray;
 
-        StartServiceCommand = new AsyncRelayCommand(StartService);
-        StopServiceCommand = new AsyncRelayCommand(StopService);
-
-        // Start Timers
-        logRefreshTimer = new Timer(RefreshLogs, null, 0, 3000); // Auto-refresh logs every 3 sec
-        statusRefreshTimer = new Timer(CheckServiceStatus, null, 0, 5000); // Auto-refresh status every 5 sec
-    }
-
-    private void EnsureLogFileExists(string directory, string filePath)
-    {
-        try
+        public LogsViewModel(IpsApiClient api)
         {
-            if (!Directory.Exists(directory))
+            _api = api;
+        }
+
+        public LogsViewModel() : this(
+            MauiProgram.Services?.GetService<IpsApiClient>()
+            ?? new IpsApiClient(new HttpClient { BaseAddress = new Uri("http://127.0.0.1:5000/") }, new AuthSession()))
+        {
+        }
+
+        public void StartPolling()
+        {
+            _timer ??= Application.Current?.Dispatcher.CreateTimer();
+            if (_timer == null) return;
+            _timer.Interval = TimeSpan.FromSeconds(3);
+            _timer.Tick -= OnTick;
+            _timer.Tick += OnTick;
+            _timer.Start();
+            _ = RefreshAsync();
+        }
+
+        public void StopPolling() => _timer?.Stop();
+
+        void OnTick(object? sender, EventArgs e) => _ = RefreshAsync();
+
+        partial void OnSearchTextChanged(string value) => ApplyFilter();
+
+        void ApplyFilter()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
             {
-                Directory.Delete(directory, true); // Delete if it somehow exists
+                FilteredLogContent = LogContent;
+                return;
             }
+            var lines = LogContent.Split('\n')
+                .Where(line => line.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+            FilteredLogContent = string.Join("\n", lines);
+        }
 
-            //creating anyway
-            //Directory.CreateDirectory(directory);
-
-            if (!File.Exists(filePath))
+        [RelayCommand]
+        async Task StartService()
+        {
+            try
             {
-                File.WriteAllText(filePath, "Log initialized...\n");
+                await _api.StartAsync();
+                await RefreshAsync();
             }
-        }
-        catch (Exception ex)
-        {
-            LogContent = $"Error ensuring log file exists: {ex.Message}";
-        }
-    }
-
-    private void RefreshLogs(object state)
-    {
-        try
-        {
-            string logs = File.Exists(logFilePath) ? File.ReadAllText(logFilePath) : "Log file not found.";
-            MainThread.BeginInvokeOnMainThread(() =>
+            catch
             {
-                LogContent = logs;
-                ApplyFilter();
-            });
-        }
-        catch (Exception ex)
-        {
-            MainThread.BeginInvokeOnMainThread(() => LogContent = $"Error reading logs: {ex.Message}");
-        }
-    }
-    public void ApplyFilter()
-    {
-        if (string.IsNullOrWhiteSpace(SearchText))
-        {
-            FilteredLogContent = LogContent;
-        }
-        else
-        {
-            var filteredLines = LogContent.Split('\n')
-                .Where(line => line.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
-                .ToArray();
-            FilteredLogContent = string.Join("\n", filteredLines);
-        }
-    }
-
-    private async void CheckServiceStatus(object state)
-    {
-        try
-        {
-            HttpResponseMessage response = await _httpClient.GetAsync("http://127.0.0.1:5000/status");
-            string status = response.IsSuccessStatusCode ? await response.Content.ReadAsStringAsync() : "unknown";
-
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                if (status.Contains("running", StringComparison.OrdinalIgnoreCase))
-                {
-                    ServiceStatus = "Running";
-                    ServiceColor = Colors.Green;
-                }
-                else
-                {
-                    ServiceStatus = "Stopped";
-                    ServiceColor = Colors.Red;
-                }
-            });
-        }
-        catch
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                ServiceStatus = "Service Unreachable";
-                ServiceColor = Colors.Orange;
-            });
-        }
-    }
-
-    private async Task StartService()
-    {
-        try
-        {
-            HttpResponseMessage response = await _httpClient.GetAsync("http://127.0.0.1:5000/start");
-            if (response.IsSuccessStatusCode)
-            {
-                ServiceStatus = "Running";
-                ServiceColor = Colors.Green;
-            }
-        }
-        catch
-        {
-            ServiceStatus = "Failed to start";
-            ServiceColor = Colors.Red;
-        }
-    }
-
-    private async Task StopService()
-    {
-        try
-        {
-            HttpResponseMessage response = await _httpClient.GetAsync("http://127.0.0.1:5000/stop");
-            if (response.IsSuccessStatusCode)
-            {
-                ServiceStatus = "Stopped";
+                ServiceStatus = "Failed to start";
                 ServiceColor = Colors.Red;
             }
         }
-        catch
+
+        [RelayCommand]
+        async Task StopService()
         {
-            ServiceStatus = "Failed to stop";
-            ServiceColor = Colors.Orange;
+            try
+            {
+                await _api.StopAsync();
+                await RefreshAsync();
+            }
+            catch
+            {
+                ServiceStatus = "Failed to stop";
+                ServiceColor = Colors.Orange;
+            }
+        }
+
+        async Task RefreshAsync()
+        {
+            try
+            {
+                var status = await _api.GetStatusAsync();
+                var running = string.Equals(status.Status, "running", StringComparison.OrdinalIgnoreCase);
+                ServiceStatus = running ? "Running" : "Stopped";
+                ServiceColor = running ? Colors.Green : Colors.Red;
+                LogContent = await _api.GetLogsTextAsync();
+                ApplyFilter();
+            }
+            catch (Exception ex)
+            {
+                ServiceStatus = "Service Unreachable";
+                ServiceColor = Colors.Orange;
+                LogContent = ex.Message;
+            }
         }
     }
 }

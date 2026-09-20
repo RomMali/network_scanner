@@ -1,15 +1,25 @@
-using Microsoft.Maui.Controls.Xaml;
 using GalacticGuard.ViewModels;
 
 namespace GalacticGuard.Views
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class LogsView : ContentPage
     {
         public LogsView()
         {
             InitializeComponent();
-            BindingContext = new LogsViewModel();
+            BindingContext = MauiProgram.Services?.GetService<LogsViewModel>() ?? new LogsViewModel();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            (BindingContext as LogsViewModel)?.StartPolling();
+        }
+
+        protected override void OnDisappearing()
+        {
+            (BindingContext as LogsViewModel)?.StopPolling();
+            base.OnDisappearing();
         }
     }
 }

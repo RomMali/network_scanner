@@ -1,0 +1,104 @@
+2026-09-19 16:23:01,926 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:01,929 - INFO - System: IPS worker starting in NFQUEUE_MOCK mode
+2026-09-19 16:23:01,929 - INFO - System: IPS worker started mock=True queue=0
+2026-09-19 16:23:01,931 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:01,931 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:01,931 - INFO - System: IPS worker stop requested
+2026-09-19 16:23:01,931 - INFO - System: IPS worker stopped (fail-open: NFQUEUE rules removed)
+2026-09-19 16:23:01,932 - INFO - System: IPS worker starting in NFQUEUE_MOCK mode
+2026-09-19 16:23:01,932 - INFO - System: IPS worker started mock=True queue=0
+2026-09-19 16:23:01,934 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:01,934 - INFO - System: IPS worker stopped (fail-open: NFQUEUE rules removed)
+2026-09-19 16:23:01,934 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:01,934 - INFO - System: IPS worker stop requested
+2026-09-19 16:23:01,936 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:01,938 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:01,940 - INFO - System: verdict=ACCEPT src=198.51.100.8 dst=198.51.100.1 proto=tcp rule_id=None
+2026-09-19 16:23:01,943 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:20,887 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:20,893 - INFO - System: IPS worker starting in NFQUEUE_MOCK mode
+2026-09-19 16:23:20,893 - INFO - System: IPS worker started mock=True queue=0
+2026-09-19 16:23:20,895 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:20,895 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:20,895 - INFO - System: IPS worker stop requested
+2026-09-19 16:23:20,895 - INFO - System: IPS worker stopped (fail-open: NFQUEUE rules removed)
+2026-09-19 16:23:20,896 - INFO - System: IPS worker starting in NFQUEUE_MOCK mode
+2026-09-19 16:23:20,896 - INFO - System: IPS worker started mock=True queue=0
+2026-09-19 16:23:20,897 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:20,898 - INFO - System: IPS worker stop requested
+2026-09-19 16:23:20,898 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:20,898 - INFO - System: IPS worker stopped (fail-open: NFQUEUE rules removed)
+2026-09-19 16:23:20,900 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:20,901 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:23:20,903 - INFO - System: verdict=ACCEPT src=198.51.100.8 dst=198.51.100.1 proto=tcp rule_id=None
+2026-09-19 16:23:20,905 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:32:16,745 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-19 16:32:16,747 - INFO - System: FORWARD NFQUEUE installed queue-num=0
+2026-09-19 16:32:16,753 - INFO - System: IPS worker started mock=False queue=0
+2026-09-19 20:16:57,445 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:16:57,471 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:16:58,446 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:16:58,470 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:16:59,447 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:16:59,481 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:00,448 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:00,471 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:01,449 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:01,472 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:02,450 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:02,473 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:03,452 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:03,475 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:04,452 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:04,485 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:05,453 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:05,494 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:06,454 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:06,484 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:07,455 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:07,484 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:08,456 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:08,489 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:09,457 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:09,487 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:10,459 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:10,498 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:11,460 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:11,492 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:12,462 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:12,493 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:13,464 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:13,492 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:14,465 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:14,492 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:14,533 - INFO - System: verdict=ALERT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:15,466 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:15,494 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:15,533 - INFO - System: verdict=ALERT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:16,467 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:16,497 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:17,468 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:17,508 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:18,469 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:18,494 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:19,470 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:19,497 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:20,471 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:20,496 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:21,472 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:21,499 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:22,473 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:22,504 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:22,542 - INFO - System: verdict=ALERT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:23,474 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:23,497 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:24,475 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:24,505 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:25,476 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:25,516 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:26,477 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:26,508 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:27,478 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:27,505 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-19 20:17:28,479 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
+2026-09-19 20:17:28,509 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None

@@ -82,7 +82,10 @@ def select_network_id_by_name(name):
 
 
 def select_blacklist_id_by_ip(ip):
-    return select_entry_id_by_field(BLACKLIST_FILE, "ip", ip)
+    for entry in get_blacklist():
+        if entry.get("ip") == ip or entry.get("source_ip") == ip:
+            return entry.get("id")
+    return None
 
 
 def get_attacks():
@@ -110,18 +113,52 @@ def add_report(report_data, user_id):
     return _add_entry(REPORTS_FILE, report_data)
 
 
-# 👇 Blacklist
+def _as_blacklist_list(data):
+    if isinstance(data, dict):
+        rows = []
+        for i, (ip, meta) in enumerate(data.items(), start=1):
+            row = {"id": i, "ip": ip}
+            if isinstance(meta, dict):
+                row.update(meta)
+            else:
+                row["reason"] = str(meta)
+            rows.append(row)
+        return rows
+    if isinstance(data, list):
+        return data
+    return []
+
+
 def get_blacklist():
-    return load_json(BLACKLIST_FILE)
+    return _as_blacklist_list(load_json(BLACKLIST_FILE))
+
+
+def iter_blacklist_ips():
+    for entry in get_blacklist():
+        ip = entry.get("ip") or entry.get("source_ip")
+        if ip:
+            yield ip
 
 
 def add_to_blacklist(ip, reason):
-    data = load_json(BLACKLIST_FILE)
-    data[ip] = {
+    data = _as_blacklist_list(load_json(BLACKLIST_FILE))
+    for entry in data:
+        if entry.get("ip") == ip:
+            entry["reason"] = reason
+            entry["timestamp"] = datetime.utcnow().isoformat()
+            save_json(BLACKLIST_FILE, data)
+            return entry
+    entry = {
+        "id": (max((int(e.get("id") or 0) for e in data), default=0) + 1),
+        "ip": ip,
+        "source_ip": ip,
         "reason": reason,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
+        "blocked_at": datetime.utcnow().isoformat(),
     }
+    data.append(entry)
     save_json(BLACKLIST_FILE, data)
+    return entry
 
 
 def update_network_by_name(name, new_data):
@@ -139,17 +176,28 @@ def delete_network_by_name(name):
 
 
 def update_blacklist_by_ip(ip, new_data):
-    entry_id = select_blacklist_id_by_ip(ip)
-    if entry_id:
-        return _update_entry_by_id(BLACKLIST_FILE, entry_id, new_data)
+    data = _as_blacklist_list(load_json(BLACKLIST_FILE))
+    for i, entry in enumerate(data):
+        if entry.get("ip") == ip or entry.get("source_ip") == ip:
+            data[i].update(new_data)
+            data[i]["ip"] = ip
+            save_json(BLACKLIST_FILE, data)
+            return data[i]
     return None
 
 
 def delete_blacklist_by_ip(ip):
-    entry_id = select_blacklist_id_by_ip(ip)
-    if entry_id:
-        return _delete_entry_by_id(BLACKLIST_FILE, entry_id)
-    return None
+    data = _as_blacklist_list(load_json(BLACKLIST_FILE))
+    deleted = None
+    kept = []
+    for entry in data:
+        if entry.get("ip") == ip or entry.get("source_ip") == ip:
+            deleted = entry
+        else:
+            kept.append(entry)
+    if deleted is not None:
+        save_json(BLACKLIST_FILE, kept)
+    return deleted
 
 
 def get_all_entries(file_path):

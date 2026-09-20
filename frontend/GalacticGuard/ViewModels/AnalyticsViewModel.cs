@@ -1,52 +1,59 @@
-using GalacticGuard.ViewModels;
-using System;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Text.Json;
-using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using GalacticGuard.Models;
+using GalacticGuard.Services;
 
 namespace GalacticGuard.ViewModels
 {
-    public class AnalyticsViewModel : BaseViewModel
+    public partial class AnalyticsViewModel : ObservableObject
     {
-        private string databasePath = Path.Combine(FileSystem.AppDataDirectory, "analytics.json");
+        private readonly IpsApiClient _api;
+        private IDispatcherTimer? _timer;
 
-        private ObservableCollection<AttackSummary> _attackData;
-        public ObservableCollection<AttackSummary> AttackData
+        public ObservableCollection<AlertItem> Alerts { get; } = new();
+
+        [ObservableProperty] private string summary = "No alerts";
+
+        public AnalyticsViewModel(IpsApiClient api)
         {
-            get => _attackData;
-            set => SetProperty(ref _attackData, value);
+            _api = api;
         }
 
-        public AnalyticsViewModel()
+        public AnalyticsViewModel() : this(
+            MauiProgram.Services?.GetService<IpsApiClient>()
+            ?? new IpsApiClient(new HttpClient { BaseAddress = new Uri("http://127.0.0.1:5000/") }, new AuthSession()))
         {
-            LoadAnalyticsData();
         }
 
-        private async void LoadAnalyticsData()
+        public void StartPolling()
         {
-            if (File.Exists(databasePath))
+            _timer ??= Application.Current?.Dispatcher.CreateTimer();
+            if (_timer == null) return;
+            _timer.Interval = TimeSpan.FromSeconds(5);
+            _timer.Tick -= OnTick;
+            _timer.Tick += OnTick;
+            _timer.Start();
+            _ = RefreshAsync();
+        }
+
+        public void StopPolling() => _timer?.Stop();
+
+        void OnTick(object? sender, EventArgs e) => _ = RefreshAsync();
+
+        async Task RefreshAsync()
+        {
+            try
             {
-                try
-                {
-                    string json = await File.ReadAllTextAsync(databasePath);
-                    AttackData = new ObservableCollection<AttackSummary>(JsonSerializer.Deserialize<List<AttackSummary>>(json) ?? new List<AttackSummary>());
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error loading analytics data: {ex.Message}");
-                }
+                var items = await _api.GetAlertsAsync();
+                Alerts.Clear();
+                foreach (var a in items)
+                    Alerts.Add(a);
+                Summary = items.Count == 0 ? "No ML alerts" : $"{items.Count} anomaly alerts (informational, not auto-DROP)";
             }
-            else
+            catch (Exception ex)
             {
-                AttackData = new ObservableCollection<AttackSummary>();
+                Summary = ex.Message;
             }
         }
-    }
-
-    public class AttackSummary
-    {
-        public string AttackType { get; set; }
-        public int Count { get; set; }
     }
 }

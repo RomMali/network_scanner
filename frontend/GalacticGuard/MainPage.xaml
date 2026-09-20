@@ -3,23 +3,21 @@
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:views="clr-namespace:GalacticGuard.Views"
        x:Class="GalacticGuard.MainPage">
-
-    <!-- Navigation Structure -->
     <TabBar>
         <Tab Title="Dashboard" Icon="dashboard.png">
             <ShellContent ContentTemplate="{DataTemplate views:DashboardView}" />
         </Tab>
-        <Tab Title="Analytics" Icon="analytics.png">
+        <Tab Title="Alerts" Icon="analytics.png">
             <ShellContent ContentTemplate="{DataTemplate views:AnalyticsView}" />
         </Tab>
         <Tab Title="Reports" Icon="reports.png">
-            <ShellContent ContentTemplate="{DataTemplate views:AnalyticsView}" />
-        </Tab>
-        <Tab Title="Notifications" Icon="notifications.png">
-            <ShellContent ContentTemplate="{DataTemplate views:NotificationsView}" />
+            <ShellContent ContentTemplate="{DataTemplate views:ReportsView}" />
         </Tab>
         <Tab Title="Logs" Icon="logs.png">
             <ShellContent ContentTemplate="{DataTemplate views:LogsView}" />
+        </Tab>
+        <Tab x:Name="RulesTab" Title="Rules" Icon="settings.png">
+            <ShellContent ContentTemplate="{DataTemplate views:RulesView}" />
         </Tab>
     </TabBar>
 </Shell>

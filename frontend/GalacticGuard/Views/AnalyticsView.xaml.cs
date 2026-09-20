@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Maui.Controls;
 using GalacticGuard.ViewModels;
 
 namespace GalacticGuard.Views
@@ -13,7 +7,19 @@ namespace GalacticGuard.Views
         public AnalyticsView()
         {
             InitializeComponent();
-            BindingContext = new AnalyticsViewModel();
+            BindingContext = MauiProgram.Services?.GetService<AnalyticsViewModel>() ?? new AnalyticsViewModel();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            (BindingContext as AnalyticsViewModel)?.StartPolling();
+        }
+
+        protected override void OnDisappearing()
+        {
+            (BindingContext as AnalyticsViewModel)?.StopPolling();
+            base.OnDisappearing();
         }
     }
 }

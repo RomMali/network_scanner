@@ -1,0 +1,10 @@
+[
+    {
+        "action": "deny",
+        "proto": "ICMP",
+        "dst_cidr": "8.8.8.8/32",
+        "enabled": true,
+        "id": 1,
+        "priority": 100
+    }
+]

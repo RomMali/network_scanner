@@ -1,28 +1,44 @@
-using System;
 using System.Collections.ObjectModel;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using CommunityToolkit.Mvvm.ComponentModel;
+using GalacticGuard.Models;
+using GalacticGuard.Services;
 
-public class ReportsViewModel
+namespace GalacticGuard.ViewModels
 {
-    private readonly HttpClient _httpClient = new HttpClient();
-    public ObservableCollection<string> Logs { get; set; } = new ObservableCollection<string>();
-
-    public async Task LoadLogs()
+    public partial class ReportsViewModel : ObservableObject
     {
-        try
+        private readonly IpsApiClient _api;
+
+        public ObservableCollection<IpsEvent> Drops { get; } = new();
+
+        [ObservableProperty] private string summary = "No drops";
+
+        public ReportsViewModel(IpsApiClient api)
         {
-            string apiUrl = "http://localhost:5000/logs"; // URL of Python Flask API
-            var response = await _httpClient.GetStringAsync(apiUrl);
-            var logs = JsonConvert.DeserializeObject<string[]>(response);
-            Logs.Clear();
-            foreach (var log in logs)
-                Logs.Add(log);
+            _api = api;
         }
-        catch (Exception ex)
+
+        public ReportsViewModel() : this(
+            MauiProgram.Services?.GetService<IpsApiClient>()
+            ?? new IpsApiClient(new HttpClient { BaseAddress = new Uri("http://127.0.0.1:5000/") }, new AuthSession()))
         {
-            Console.WriteLine($"Error fetching logs: {ex.Message}");
+        }
+
+        public async Task RefreshAsync()
+        {
+            try
+            {
+                var events = await _api.GetEventsAsync();
+                var drops = events.Where(e => string.Equals(e.Action, "DROP", StringComparison.OrdinalIgnoreCase)).ToList();
+                Drops.Clear();
+                foreach (var d in drops)
+                    Drops.Add(d);
+                Summary = $"{drops.Count} DROP events";
+            }
+            catch (Exception ex)
+            {
+                Summary = ex.Message;
+            }
         }
     }
 }

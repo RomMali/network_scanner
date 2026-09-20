@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GalacticGuard.Views.RulesView"
+             Title="Rules">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="8">
+            <Label Text="{Binding Message}" TextColor="Orange"/>
+            <VerticalStackLayout IsVisible="{Binding IsAdvanced}" Spacing="8">
+                <Entry Placeholder="src CIDR" Text="{Binding NewSrc}"/>
+                <Entry Placeholder="dst" Text="{Binding NewDst}"/>
+                <Entry Placeholder="proto" Text="{Binding NewProto}"/>
+                <Entry Placeholder="dport" Text="{Binding NewDport}"/>
+                <Entry Placeholder="action allow|deny" Text="{Binding NewAction}"/>
+                <Entry Placeholder="priority" Text="{Binding NewPriority}"/>
+                <Button Text="Add rule" Command="{Binding AddRuleCommand}"/>
+                <CollectionView ItemsSource="{Binding Rules}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="*,Auto" Padding="4">
+                                <Label Text="{Binding Src}"/>
+                                <Button Grid.Column="1" Text="Delete" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteRuleCommand}" CommandParameter="{Binding .}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <Label Text="Blacklist" FontAttributes="Bold"/>
+                <CollectionView ItemsSource="{Binding Blacklist}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label Text="{Binding Ip}"/>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

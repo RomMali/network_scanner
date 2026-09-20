@@ -1,26 +1,29 @@
 using System.ComponentModel;
 
-public class NotificationsViewModel : INotifyPropertyChanged
+namespace GalacticGuard.ViewModels
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    private string _notificationMessage = "No new notifications";
-
-    public string NotificationMessage
+    public class NotificationsViewModel : INotifyPropertyChanged
     {
-        get => _notificationMessage;
-        set
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private string _notificationMessage = "No new notifications";
+
+        public string NotificationMessage
         {
-            if (_notificationMessage != value)
+            get => _notificationMessage;
+            set
             {
-                _notificationMessage = value;
-                OnPropertyChanged(nameof(NotificationMessage));
+                if (_notificationMessage != value)
+                {
+                    _notificationMessage = value;
+                    OnPropertyChanged(nameof(NotificationMessage));
+                }
             }
         }
-    }
 
-    protected void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

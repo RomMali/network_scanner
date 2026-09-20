@@ -6,3 +6,5 @@ node_modules/
 
 # Ignore temporary files
 *.tmp
+
+.venv/

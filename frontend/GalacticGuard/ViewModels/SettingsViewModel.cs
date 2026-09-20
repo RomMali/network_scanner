@@ -1,26 +1,29 @@
 using System.ComponentModel;
 
-public class SettingsViewModel : INotifyPropertyChanged
+namespace GalacticGuard.ViewModels
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    private string _theme = "Light";
-
-    public string Theme
+    public class SettingsViewModel : INotifyPropertyChanged
     {
-        get => _theme;
-        set
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private string _theme = "Light";
+
+        public string Theme
         {
-            if (_theme != value)
+            get => _theme;
+            set
             {
-                _theme = value;
-                OnPropertyChanged(nameof(Theme));
+                if (_theme != value)
+                {
+                    _theme = value;
+                    OnPropertyChanged(nameof(Theme));
+                }
             }
         }
-    }
 
-    protected void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

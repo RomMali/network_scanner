@@ -1,2 +1,9 @@
 flask
+flask-jwt-extended
+bcrypt
 scapy
+netfilterqueue
+mysql-connector-python
+scikit-learn
+numpy
+pytest

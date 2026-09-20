@@ -1,172 +1,102 @@
-﻿using System.ComponentModel;
-using System.Windows.Input;
-using Microsoft.Maui.Graphics;
-using System.Threading.Tasks;
-using System.IO;
-using System.Net.Http;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using GalacticGuard.Models;
+using GalacticGuard.Services;
 
 namespace GalacticGuard.ViewModels
 {
-    public class DashboardViewModel : INotifyPropertyChanged
+    public partial class DashboardViewModel : ObservableObject
     {
-        private readonly HttpClient _httpClient = new HttpClient();
-        private bool isServiceRunning = false;
-        private bool isLoading = false;
-        private string buttonText = "Start Service";
-        private Color buttonColor = Colors.Gray;
-        private bool isButtonEnabled = true;
-        private string logContent = "No logs available.";
+        private readonly IpsApiClient _api;
+        private readonly AuthSession _session;
+        private IDispatcherTimer? _timer;
 
-        private readonly string logFilePath = Path.Combine(FileSystem.AppDataDirectory, "service_log.txt");
+        [ObservableProperty] private string serviceStatus = "Checking...";
+        [ObservableProperty] private Color serviceColor = Colors.Gray;
+        [ObservableProperty] private string failOpen = "fail-open";
+        [ObservableProperty] private int dropCount;
+        [ObservableProperty] private int acceptCount;
+        [ObservableProperty] private int alertCount;
+        [ObservableProperty] private string lastDrop = "None";
+        [ObservableProperty] private string userLabel = string.Empty;
+        [ObservableProperty] private string modeLabel = "Standard";
+        [ObservableProperty] private string errorMessage = string.Empty;
 
-        public string ButtonText
+        public DashboardViewModel(IpsApiClient api, AuthSession session)
         {
-            get => buttonText;
-            set { buttonText = value; OnPropertyChanged(nameof(ButtonText)); }
+            _api = api;
+            _session = session;
+            UserLabel = session.Username;
+            ModeLabel = session.AdvancedMode ? "Advanced" : "Standard";
         }
 
-        public Color ButtonColor
+        public void StartPolling()
         {
-            get => buttonColor;
-            set { buttonColor = value; OnPropertyChanged(nameof(ButtonColor)); }
+            _timer ??= Application.Current?.Dispatcher.CreateTimer();
+            if (_timer == null) return;
+            _timer.Interval = TimeSpan.FromSeconds(3);
+            _timer.Tick -= OnTick;
+            _timer.Tick += OnTick;
+            _timer.Start();
+            _ = RefreshAsync();
         }
 
-        public bool IsButtonEnabled
+        public void StopPolling() => _timer?.Stop();
+
+        void OnTick(object? sender, EventArgs e) => _ = RefreshAsync();
+
+        [RelayCommand]
+        async Task ToggleIps()
         {
-            get => isButtonEnabled;
-            set { isButtonEnabled = value; OnPropertyChanged(nameof(IsButtonEnabled)); }
-        }
-
-        public string LogContent
-        {
-            get => logContent;
-            set { logContent = value; OnPropertyChanged(nameof(LogContent)); }
-        }
-
-        public ICommand ToggleServiceCommand { get; }
-        public ICommand ViewLogsCommand { get; }
-
-        public DashboardViewModel()
-        {
-            ToggleServiceCommand = new Command(async () => await ToggleServiceAsync());
-            ViewLogsCommand = new Command(ViewLogs);
-        }
-
-        private string errorMessage;
-        public string ErrorMessage
-        {
-            get => errorMessage;
-            set
-            {
-                errorMessage = value;
-                OnPropertyChanged(nameof(ErrorMessage));
-            }
-        }
-
-        private async Task ToggleServiceAsync()
-        {
-            if (isLoading) return; // Prevent multiple clicks
-
-            isLoading = true;
-            IsButtonEnabled = false;
-            ButtonText = "Loading...";
-            ButtonColor = Colors.Orange;
-            ErrorMessage = ""; // Clear previous errors
-
-            await Task.Delay(500); // Small delay to show loading state
-
-            bool success = false;
-
             try
             {
-                using HttpClient client = new HttpClient();
-                string url = isServiceRunning ? "http://127.0.0.1:5000/stop" : "http://127.0.0.1:5000/start";
-                HttpResponseMessage response = await client.GetAsync(url);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    isServiceRunning = !isServiceRunning;
-                    success = true;
-                }
+                var status = await _api.GetStatusAsync();
+                if (string.Equals(status.Status, "running", StringComparison.OrdinalIgnoreCase))
+                    await _api.StopAsync();
                 else
-                {
-                    ErrorMessage = "❌ Failed to start/stop the service.";
-                }
+                    await _api.StartAsync();
+                await RefreshAsync();
             }
             catch (Exception ex)
             {
-                ErrorMessage = $"❌ Error: {ex.Message}";
-            }
-
-            ButtonText = isServiceRunning ? "Stop Service" : "Start Service";
-            ButtonColor = isServiceRunning ? Colors.Green : Colors.Gray;
-            isLoading = false;
-            IsButtonEnabled = true; // Re-enable button
-
-            if (success)
-            {
-                ErrorMessage = isServiceRunning ? "✅ Service started successfully." : "✅ Service stopped successfully.";
+                ErrorMessage = ex.Message;
             }
         }
 
+        [RelayCommand]
+        void Logout()
+        {
+            _session.Clear();
+            var window = Application.Current?.Windows.FirstOrDefault();
+            if (window != null)
+                window.Page = new Views.LoginPage();
+            else if (Application.Current != null)
+                Application.Current.MainPage = new Views.LoginPage();
+        }
 
-
-        private async Task<bool> StartService()
+        async Task RefreshAsync()
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync("http://127.0.0.1:5000/start");
-                return response.IsSuccessStatusCode;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private async Task<bool> StopService()
-        {
-            try
-            {
-                HttpResponseMessage response = await _httpClient.GetAsync("http://127.0.0.1:5000/stop");
-                return response.IsSuccessStatusCode;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private void LogServiceStatus(string status)
-        {
-            string logEntry = $"{DateTime.Now}: {status}\n";
-            File.AppendAllText(logFilePath, logEntry);
-        }
-
-        private void ViewLogs()
-        {
-            try
-            {
-                if (File.Exists(logFilePath))
-                {
-                    LogContent = File.ReadAllText(logFilePath); // Reload logs each time
-                }
-                else
-                {
-                    LogContent = "No logs found.";
-                }
+                var status = await _api.GetStatusAsync();
+                var running = string.Equals(status.Status, "running", StringComparison.OrdinalIgnoreCase);
+                ServiceStatus = running ? "Running" : "Stopped";
+                ServiceColor = running ? Colors.Green : Colors.Red;
+                FailOpen = status.FailOpen ? "fail-open (queue rules removed on stop)" : "fail-closed";
+                var events = await _api.GetEventsAsync();
+                DropCount = events.Count(e => string.Equals(e.Action, "DROP", StringComparison.OrdinalIgnoreCase));
+                AcceptCount = events.Count(e => string.Equals(e.Action, "ACCEPT", StringComparison.OrdinalIgnoreCase));
+                AlertCount = events.Count(e => string.Equals(e.Action, "ALERT", StringComparison.OrdinalIgnoreCase));
+                var last = events.LastOrDefault(e => string.Equals(e.Action, "DROP", StringComparison.OrdinalIgnoreCase));
+                LastDrop = last == null ? "None" : $"{last.Src} → {last.Dst} ({last.Reason})";
+                ErrorMessage = string.Empty;
             }
             catch (Exception ex)
             {
-                LogContent = $"Error reading logs: {ex.Message}";
+                ServiceStatus = "Unreachable";
+                ServiceColor = Colors.Orange;
+                ErrorMessage = ex.Message;
             }
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
