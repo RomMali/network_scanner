@@ -102,3 +102,6 @@
 2026-09-19 20:17:27,505 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
 2026-09-19 20:17:28,479 - INFO - System: verdict=ACCEPT src=10.99.0.2 dst=8.8.8.8 proto=icmp rule_id=None
 2026-09-19 20:17:28,509 - INFO - System: verdict=ACCEPT src=8.8.8.8 dst=10.99.0.2 proto=icmp rule_id=None
+2026-09-27 15:09:44,282 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-09-27 15:09:44,283 - INFO - System: FORWARD NFQUEUE installed queue-num=0
+2026-09-27 15:09:44,289 - INFO - System: IPS worker started mock=False queue=0
