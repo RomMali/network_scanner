@@ -1,1 +1,0 @@
-C:\Users\Magshimim\Documents\magshimim\final\network_scanner\frontend\GalacticGuard\GalacticGuard.csproj;x64
