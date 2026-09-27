@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt
+from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 
 from backend.logic.event_log import format_text, get_events
 from backend.logic.ml_pipeline import get_alerts
@@ -24,7 +24,7 @@ def _status_payload():
 def _start_payload():
     result = worker.start()
     if result.get("ok"):
-        return jsonify({"status": "running", "Sniffer started": True, **result}), 200
+        return jsonify({"status": "running", **result}), 200
     if worker.running:
         return jsonify({"status": "running", "message": "already running"}), 200
     return jsonify({"status": "stopped", "error": "failed to start"}), 400
@@ -43,12 +43,12 @@ def _require_advanced():
 
 
 @core_bp.route("/start", methods=["GET"])
-def start_sniffer():
+def start_ips_legacy():
     return _start_payload()
 
 
 @core_bp.route("/stop", methods=["GET"])
-def stop_sniffer():
+def stop_ips_legacy():
     return _stop_payload()
 
 
@@ -118,8 +118,6 @@ def get_attacks():
 def blacklist_collection():
     if request.method == "GET":
         return jsonify(json_storage.get_blacklist()), 200
-    from flask_jwt_extended import verify_jwt_in_request
-
     verify_jwt_in_request()
     denied = _require_advanced()
     if denied:

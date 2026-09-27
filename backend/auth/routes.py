@@ -1,7 +1,8 @@
-from backend.auth.utils import hash_password, check_password, generate_token
-from db.mysql_conn import get_user_by_username, create_user
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
+
+from backend.auth.utils import check_password, generate_token, hash_password
+from db.mysql_conn import create_user, get_user_by_username
 
 auth_bp = Blueprint("auth", __name__)
 

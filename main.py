@@ -1,9 +1,8 @@
-import os
-
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from backend.auth.routes import auth_bp
 from backend.core.routes import core_bp
+import os
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "dev-only-change-me")

@@ -8,13 +8,13 @@ import queue
 import threading
 from collections import defaultdict, deque
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Deque, Dict, List, Optional
 
 from backend.logic.event_log import record
 from backend.logic.packet_parse import PacketMeta
 
-_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-EVENTS_PATH = os.path.join(_BASE, "logs", "events.jsonl")
+EVENTS_PATH = Path(__file__).resolve().parents[2] / "logs" / "events.jsonl"
 ALERTS: Deque[Dict[str, Any]] = deque(maxlen=500)
 _alert_lock = threading.Lock()
 
@@ -107,8 +107,8 @@ def _handle(item: Dict[str, Any]) -> None:
         "reason": "ml_anomaly" if anomaly else "ml_feature",
     }
     try:
-        os.makedirs(os.path.dirname(EVENTS_PATH), exist_ok=True)
-        with open(EVENTS_PATH, "a", encoding="utf-8") as fh:
+        EVENTS_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with EVENTS_PATH.open("a", encoding="utf-8") as fh:
             fh.write(json.dumps(row) + "\n")
     except OSError:
         pass

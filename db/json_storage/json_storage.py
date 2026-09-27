@@ -1,7 +1,8 @@
-from backend.utils.json_handler import load_json, save_json
 from datetime import datetime
+from pathlib import Path
+
+from backend.utils.json_handler import DATA_DIR, load_json, save_json
 import json
-import os
 
 ATTACKS_FILE = "attacks.json"
 REPORTS_FILE = "reports.json"
@@ -201,18 +202,18 @@ def delete_blacklist_by_ip(ip):
 
 
 def get_all_entries(file_path):
-    """Reads all entries from a given JSON file and returns them as a list."""
-    if not os.path.exists(file_path):
+    """Reads all entries from a JSON file under db/json_storage (basename or path)."""
+    path = Path(file_path)
+    if not path.is_absolute():
+        path = DATA_DIR / path.name
+    if not path.exists():
         return []
 
-    with open(file_path, 'r') as file:
-        try:
-            data = json.load(file)
-            if isinstance(data, list):
-                return data
-            return []
-        except json.JSONDecodeError:
-            return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, list) else []
+    except json.JSONDecodeError:
+        return []
 
 
 def load_attacks():

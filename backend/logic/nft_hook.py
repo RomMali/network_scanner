@@ -8,7 +8,7 @@ from typing import List, Sequence
 
 from backend.helpers.logger import log_system_event
 
-COMMENT = "galacticguard-nfqueue"
+COMMENT = "network_scanner-nfqueue"
 DEFAULT_QUEUE = int(os.environ.get("NFQUEUE_NUM", "0"))
 
 

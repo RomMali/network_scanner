@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 import json
-import os
 import threading
 from collections import deque
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Deque, Dict, List, Optional
 
 from backend.helpers.logger import log_attack_blocked, log_system_event
@@ -14,12 +14,11 @@ _MAX = 2000
 _events: Deque[Dict[str, Any]] = deque(maxlen=_MAX)
 _lock = threading.Lock()
 
-_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-_JSONL = os.path.join(_BASE, "logs", "events.jsonl")
+_JSONL = Path(__file__).resolve().parents[2] / "logs" / "events.jsonl"
 
 
 def _ensure_log_dir() -> None:
-    os.makedirs(os.path.dirname(_JSONL), exist_ok=True)
+    _JSONL.parent.mkdir(parents=True, exist_ok=True)
 
 
 def record(event: Dict[str, Any]) -> Dict[str, Any]:
