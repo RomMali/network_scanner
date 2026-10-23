@@ -45,3 +45,10 @@
 2026-10-23 18:57:51,957 - INFO - Attack from 192.0.2.10 was blocked successfully. rule_id=r3
 2026-10-23 18:57:51,957 - INFO - Attack from 192.0.2.10 was blocked successfully. rule_id=r4
 2026-10-23 18:57:52,808 - INFO - Attack from 198.51.100.9 was blocked successfully.
+2026-10-23 19:32:48,385 - INFO - Attack from 10.1.1.1 was blocked successfully. rule_id=heuristic:syn_flood
+2026-10-23 19:32:48,387 - INFO - Attack from 192.0.2.10 was blocked successfully. rule_id=r0
+2026-10-23 19:32:48,388 - INFO - Attack from 192.0.2.10 was blocked successfully. rule_id=r1
+2026-10-23 19:32:48,388 - INFO - Attack from 192.0.2.10 was blocked successfully. rule_id=r2
+2026-10-23 19:32:48,388 - INFO - Attack from 192.0.2.10 was blocked successfully. rule_id=r3
+2026-10-23 19:32:48,388 - INFO - Attack from 192.0.2.10 was blocked successfully. rule_id=r4
+2026-10-23 19:32:49,256 - INFO - Attack from 198.51.100.9 was blocked successfully.

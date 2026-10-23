@@ -1,7 +1,6 @@
 import atexit
 import os
 import signal
-import sys
 
 from flask import Flask
 from flask_jwt_extended import JWTManager
@@ -28,6 +27,7 @@ def shutdown(signum=None, frame=None, exit_process=True):
     from backend.logic.event_log import stop as stop_event_log
     from backend.logic.nft_hook import remove_rules
     from backend.logic.nfqueue_worker import worker
+    from backend.logic.threat_intel import manager as threat_intel
 
     try:
         worker.stop()
@@ -38,11 +38,16 @@ def shutdown(signum=None, frame=None, exit_process=True):
     except Exception:
         pass
     try:
+        threat_intel.stop()
+    except Exception:
+        pass
+    try:
         remove_rules()
     except Exception:
         pass
     if exit_process and signum is not None:
-        sys.exit(0)
+        # Bypass Werkzeug waiting on non-daemon threads after SIGINT.
+        os._exit(0)
 
 
 def reset_shutdown_guard():
@@ -59,6 +64,21 @@ atexit.register(lambda: shutdown(exit_process=False))
 
 
 if __name__ == "__main__":
+    from backend.logic import nft_hook, nfqueue_worker
+
+    print("[*] Initializing Network Scanner IPS...")
+
+    nft_hook.install()
+    nfqueue_worker.worker.start()
+    # Worker may bind SIGINT/SIGTERM; reclaim them so teardown can os._exit.
     _install_signal_handlers()
-    host = os.environ.get("FLASK_HOST", "127.0.0.1")
-    app.run(host=host, port=int(os.environ.get("FLASK_PORT", "5000")), debug=False, threaded=True)
+
+    print("[*] IPS Engine Active. Starting API...")
+    host = os.environ.get("FLASK_HOST", "0.0.0.0")
+    app.run(
+        host=host,
+        port=int(os.environ.get("FLASK_PORT", "5000")),
+        debug=False,
+        threaded=True,
+        use_reloader=False,
+    )

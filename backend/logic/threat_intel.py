@@ -16,7 +16,7 @@ _USER_AGENT = "network_scanner-ips/1.0"
 
 
 def _auto_refresh_default() -> bool:
-    mock = os.environ.get("NFQUEUE_MOCK", "").strip() in ("1", "true", "TRUE", "yes")
+    mock = os.environ.get("NFQUEUE_MOCK", "0").strip().lower() in ("1", "true", "yes", "on")
     env = os.environ.get("THREAT_INTEL_AUTO_REFRESH", "").strip().lower()
     if env in ("0", "false", "no"):
         return False

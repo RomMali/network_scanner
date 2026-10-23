@@ -41,7 +41,7 @@ def db_path() -> str:
     env = os.environ.get("IPS_DB_PATH", "").strip()
     if env:
         return env
-    if os.environ.get("NFQUEUE_MOCK", "").strip() in ("1", "true", "TRUE", "yes"):
+    if os.environ.get("NFQUEUE_MOCK", "0").strip().lower() in ("1", "true", "yes", "on"):
         os.environ.setdefault("IPS_DB_URI", "1")
         return "file:ips_test?mode=memory&cache=shared"
     return str(_DEFAULT_DB)

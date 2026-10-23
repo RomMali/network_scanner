@@ -13,10 +13,15 @@ DEFAULT_QUEUE = int(os.environ.get("NFQUEUE_NUM", "0"))
 _ops: List[List[str]] = []
 
 
+def _env_flag_on(name: str, default: str = "0") -> bool:
+    val = os.environ.get(name, default)
+    if val is None:
+        val = default
+    return str(val).strip().lower() in ("1", "true", "yes", "on")
+
+
 def hooks_mocked() -> bool:
-    return os.environ.get("NFQUEUE_MOCK", "").strip() in ("1", "true", "TRUE", "yes") or os.environ.get(
-        "NETFILTERQUEUE_MOCK", ""
-    ).strip() in ("1", "true", "TRUE", "yes")
+    return _env_flag_on("NFQUEUE_MOCK") or _env_flag_on("NETFILTERQUEUE_MOCK")
 
 
 def _bin(name: str, env_key: str) -> str:

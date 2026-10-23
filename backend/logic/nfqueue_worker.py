@@ -19,12 +19,16 @@ except Exception:  # pragma: no cover - optional native dep
     NetfilterQueue = None
 
 
+def _env_flag_on(name: str, default: str = "0") -> bool:
+    val = os.environ.get(name, default)
+    if val is None:
+        val = default
+    return str(val).strip().lower() in ("1", "true", "yes", "on")
+
+
 def _use_mock() -> bool:
-    if os.environ.get("NFQUEUE_MOCK", "").strip() in ("1", "true", "TRUE", "yes"):
-        return True
-    if os.environ.get("NETFILTERQUEUE_MOCK", "").strip() in ("1", "true", "TRUE", "yes"):
-        return True
-    return NetfilterQueue is None
+    """Mock only when explicitly enabled. NFQUEUE_MOCK=0 is live (not truthy)."""
+    return _env_flag_on("NFQUEUE_MOCK") or _env_flag_on("NETFILTERQUEUE_MOCK")
 
 
 class IpsWorker:

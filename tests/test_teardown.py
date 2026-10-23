@@ -7,7 +7,7 @@ os.environ["JWT_SECRET_KEY"] = "test-secret-key-must-be-32bytes!"
 
 from backend.logic import nft_hook
 from backend.logic.nft_hook import COMMENT, hooks_mocked, remove_rules
-from backend.logic.nfqueue_worker import worker
+from backend.logic.nfqueue_worker import _use_mock, worker
 from main import reset_shutdown_guard, shutdown
 
 
@@ -38,12 +38,33 @@ def test_remove_rules_issues_forward_delete_with_comment():
     assert all("INPUT" not in op for op in tagged)
 
 
+def test_nfqueue_mock_zero_is_not_truthy():
+    prev = os.environ.get("NFQUEUE_MOCK")
+    netprev = os.environ.get("NETFILTERQUEUE_MOCK")
+    os.environ["NFQUEUE_MOCK"] = "0"
+    os.environ.pop("NETFILTERQUEUE_MOCK", None)
+    try:
+        assert _use_mock() is False
+        assert hooks_mocked() is False
+    finally:
+        if prev is None:
+            os.environ.pop("NFQUEUE_MOCK", None)
+        else:
+            os.environ["NFQUEUE_MOCK"] = prev
+        if netprev is not None:
+            os.environ["NETFILTERQUEUE_MOCK"] = netprev
+
+
 def test_shutdown_stops_worker_and_calls_remove_rules():
     worker.start()
     assert worker.running
     with patch("backend.logic.nft_hook.remove_rules") as remover:
         with patch("backend.logic.event_log.stop") as stop_logs:
-            shutdown(signum=signal.SIGINT, exit_process=False)
-            stop_logs.assert_called()
-            remover.assert_called()
+            with patch("backend.logic.threat_intel.manager.stop") as stop_intel:
+                with patch("os._exit") as exit_fn:
+                    shutdown(signum=signal.SIGINT, exit_process=True)
+                    stop_logs.assert_called()
+                    stop_intel.assert_called()
+                    remover.assert_called()
+                    exit_fn.assert_called_once_with(0)
     assert worker.running is False
