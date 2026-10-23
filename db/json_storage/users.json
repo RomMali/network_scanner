@@ -46,5 +46,17 @@
         "username": "ml_adv",
         "password_hash": "$2b$12$19xf25ZEs2nia4396sCgAuaOierbVqF0ahwm2Bo17ew5rcvPgoXUS",
         "advanced_mode": true
+    },
+    {
+        "id": 9,
+        "username": "ti_std",
+        "password_hash": "$2b$12$P4RCeJCJ.rUJ07s8Gktoru3EnRxLUdFWBrXDGj.eQgSIj9r.mfkVm",
+        "advanced_mode": false
+    },
+    {
+        "id": 10,
+        "username": "ti_adv",
+        "password_hash": "$2b$12$uN7i9Ag5RLHAfdRRcRuWtuLRitd6c3gC3dD/Iye8ydPb0m4GG4qm2",
+        "advanced_mode": true
     }
 ]

@@ -5,6 +5,7 @@ from backend.logic.event_log import format_text, query_events
 from backend.logic.heuristics import engine as heuristics_engine
 from backend.logic.ml_pipeline import get_alerts
 from backend.logic.nfqueue_worker import worker
+from backend.logic.threat_intel import manager as threat_intel
 from backend.logic.rules import (
     approve_ml_proposal,
     delete_rule,
@@ -278,3 +279,20 @@ def api_ml_proposal_reject(rule_id):
     if not deleted:
         return jsonify({"error": "Not found"}), 404
     return jsonify(deleted), 200
+
+
+@core_bp.route("/api/threat-intel/status", methods=["GET"])
+def api_threat_intel_status():
+    return jsonify(threat_intel.status()), 200
+
+
+@core_bp.route("/api/threat-intel/refresh", methods=["POST"])
+@jwt_required()
+def api_threat_intel_refresh():
+    denied = _require_advanced()
+    if denied:
+        return denied
+    try:
+        return jsonify(threat_intel.refresh_feeds()), 200
+    except Exception as exc:
+        return jsonify({"error": str(exc), **threat_intel.status()}), 502
