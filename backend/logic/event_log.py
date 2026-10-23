@@ -34,13 +34,12 @@ def record(event: Dict[str, Any]) -> Dict[str, Any]:
         pass
     action = str(event.get("action", "")).upper()
     src = event.get("src")
+    log_system_event(
+        f"verdict={action} src={src} dst={event.get('dst')} "
+        f"proto={event.get('proto')} rule_id={event.get('rule_id')}"
+    )
     if action == "DROP" and src:
-        log_attack_blocked(src)
-    else:
-        log_system_event(
-            f"verdict={action} src={src} dst={event.get('dst')} "
-            f"proto={event.get('proto')} rule_id={event.get('rule_id')}"
-        )
+        log_attack_blocked(src, event.get("rule_id"))
     return event
 
 

@@ -122,3 +122,21 @@
 2026-09-27 16:10:44,265 - INFO - System: FORWARD NFQUEUE removed queue-num=0
 2026-09-27 16:10:44,266 - INFO - System: verdict=ACCEPT src=198.51.100.8 dst=198.51.100.1 proto=tcp rule_id=None
 2026-09-27 16:10:44,268 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-10-23 18:03:18,922 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-10-23 18:03:18,923 - INFO - System: IPS worker starting in NFQUEUE_MOCK mode
+2026-10-23 18:03:18,923 - INFO - System: IPS worker started mock=True queue=0
+2026-10-23 18:03:18,926 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-10-23 18:03:18,926 - INFO - System: IPS worker stopped (fail-open: NFQUEUE rules removed)
+2026-10-23 18:03:18,926 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-10-23 18:03:18,926 - INFO - System: IPS worker stop requested
+2026-10-23 18:03:18,927 - INFO - System: IPS worker starting in NFQUEUE_MOCK mode
+2026-10-23 18:03:18,927 - INFO - System: IPS worker started mock=True queue=0
+2026-10-23 18:03:18,929 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-10-23 18:03:18,929 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-10-23 18:03:18,930 - INFO - System: IPS worker stopped (fail-open: NFQUEUE rules removed)
+2026-10-23 18:03:18,930 - INFO - System: IPS worker stop requested
+2026-10-23 18:03:18,932 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-10-23 18:03:18,933 - INFO - System: FORWARD NFQUEUE removed queue-num=0
+2026-10-23 18:03:18,934 - INFO - System: verdict=DROP src=198.51.100.9 dst=198.51.100.1 proto=tcp rule_id=None
+2026-10-23 18:03:18,934 - INFO - System: verdict=ACCEPT src=198.51.100.8 dst=198.51.100.1 proto=tcp rule_id=None
+2026-10-23 18:03:18,936 - INFO - System: FORWARD NFQUEUE removed queue-num=0

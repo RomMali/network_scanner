@@ -22,5 +22,17 @@
         "username": "netadmin",
         "password_hash": "$2b$12$/y18Pjg3Jmw5xr2.rDBgaeboZ4iP81T0gxS9Hew6jZyk.r58XSO3i",
         "advanced_mode": true
+    },
+    {
+        "id": 5,
+        "username": "heur_adv",
+        "password_hash": "$2b$12$U5uao80pICF/DXRhpuygROsCjBG4swY7AmiVwkeY.ZvK7RSLx7pDy",
+        "advanced_mode": true
+    },
+    {
+        "id": 6,
+        "username": "heur_std",
+        "password_hash": "$2b$12$kFx7BI/1UZSvuC7qHW4xpuoAJY2PzuoAD0Ppa5LajXN2gi6R3y8W2",
+        "advanced_mode": false
     }
 ]

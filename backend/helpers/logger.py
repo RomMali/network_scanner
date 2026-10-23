@@ -10,8 +10,9 @@ def log_attack_detected(source_ip, attack_type, severity=None):
     attack_logger.error(f"Attack detected from {source_ip} - Type: {attack_type} - Severity: {severity or 'Unknown'}")
 
 
-def log_attack_blocked(source_ip):
-    attack_logger.info(f"Attack from {source_ip} was blocked successfully.")
+def log_attack_blocked(source_ip, rule_id=None):
+    suffix = f" rule_id={rule_id}" if rule_id else ""
+    attack_logger.info(f"Attack from {source_ip} was blocked successfully.{suffix}")
 
 
 def log_system_event(message):

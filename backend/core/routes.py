@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 
 from backend.logic.event_log import format_text, get_events
+from backend.logic.heuristics import engine as heuristics_engine
 from backend.logic.ml_pipeline import get_alerts
 from backend.logic.nfqueue_worker import worker
 from backend.logic.rules import delete_rule, list_rules, upsert_rule
@@ -197,3 +198,23 @@ def api_rule_item(rule_id):
     body = request.json or {}
     body["id"] = rule_id
     return jsonify(upsert_rule(body))
+
+
+@core_bp.route("/api/heuristics", methods=["GET"])
+def api_heuristics_get():
+    return jsonify(heuristics_engine.snapshot()), 200
+
+
+@core_bp.route("/api/heuristics", methods=["PUT"])
+@jwt_required()
+def api_heuristics_put():
+    denied = _require_advanced()
+    if denied:
+        return denied
+    body = request.json
+    if not isinstance(body, dict):
+        return jsonify({"error": "JSON object required"}), 400
+    try:
+        return jsonify(heuristics_engine.update_config(body)), 200
+    except (TypeError, ValueError) as exc:
+        return jsonify({"error": str(exc)}), 400

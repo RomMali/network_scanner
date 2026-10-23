@@ -9,7 +9,6 @@ from typing import Optional
 from backend.helpers.logger import log_system_event
 from backend.logic import nft_hook
 from backend.logic.event_log import record
-from backend.logic.inspectors import default_inspectors
 from backend.logic.ml_pipeline import enqueue_meta
 from backend.logic.packet_parse import parse_ipv4_5tuple
 from backend.logic.verdict import ACCEPT, DROP, decide
@@ -39,11 +38,11 @@ class IpsWorker:
         self._lock = threading.Lock()
         self._signals_bound = False
 
-    def process_payload(self, payload: bytes) -> str:
+    def process_payload(self, payload: bytes, hw_addr=None) -> str:
         meta = parse_ipv4_5tuple(payload)
         if meta is None:
             return ACCEPT
-        action, details = decide(meta, inspectors=default_inspectors())
+        action, details = decide(meta, raw=payload, hw_addr=hw_addr)
         details["action"] = action
         record(details)
         try:
@@ -55,7 +54,14 @@ class IpsWorker:
     def _on_packet(self, pkt) -> None:
         try:
             payload = pkt.get_payload()
-            action = self.process_payload(payload)
+            hw_addr = None
+            getter = getattr(pkt, "get_hw", None)
+            if callable(getter):
+                try:
+                    hw_addr = getter()
+                except Exception:
+                    hw_addr = None
+            action = self.process_payload(payload, hw_addr=hw_addr)
             if action == DROP:
                 pkt.drop()
             else:

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional, Set, Tuple
 
+from backend.logic.heuristics import engine as heuristics_engine
 from backend.logic.packet_parse import PacketMeta
 from backend.logic.rules import match_rule
 
@@ -29,10 +30,16 @@ def _blacklist_ips() -> Set[str]:
         return set()
 
 
-def decide(meta: PacketMeta, inspectors=None) -> Tuple[str, Dict[str, Any]]:
+def decide(
+    meta: PacketMeta,
+    inspectors=None,
+    raw: Optional[bytes] = None,
+    hw_addr: Any = None,
+) -> Tuple[str, Dict[str, Any]]:
     """
     Return (ACCEPT|DROP, details).
-    Inspectors are optional callables: meta -> Optional[DROP reason].
+    Static JSON rules (and blacklist / drop_sources) run first.
+    Heuristics see the raw payload only when no static match returned.
     ML must not be passed here for blocking.
     """
     details: Dict[str, Any] = {
@@ -62,6 +69,14 @@ def decide(meta: PacketMeta, inspectors=None) -> Tuple[str, Dict[str, Any]]:
         details["reason"] = "drop_sources"
         details["action"] = DROP
         return DROP, details
+
+    if raw:
+        heuristic_id = heuristics_engine.evaluate(raw, hw_addr=hw_addr)
+        if heuristic_id:
+            details["rule_id"] = heuristic_id
+            details["reason"] = heuristic_id
+            details["action"] = DROP
+            return DROP, details
 
     if inspectors:
         for inspect in inspectors:
