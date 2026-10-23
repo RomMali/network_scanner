@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 
-from backend.logic.event_log import format_text, get_events
+from backend.logic.event_log import format_text, query_events
 from backend.logic.heuristics import engine as heuristics_engine
 from backend.logic.ml_pipeline import get_alerts
 from backend.logic.nfqueue_worker import worker
@@ -169,9 +169,33 @@ def stop_ips():
 
 @core_bp.route("/api/logs", methods=["GET"])
 def api_logs():
-    if request.args.get("format") == "json":
-        return jsonify(get_events(limit=int(request.args.get("limit", 200))))
-    return jsonify({"logs": format_text(), "status": _status_payload()["status"]})
+    if request.args.get("format") == "text":
+        return jsonify({"logs": format_text(), "status": _status_payload()["status"]})
+    try:
+        limit = int(request.args.get("limit", 50))
+    except (TypeError, ValueError):
+        limit = 50
+    try:
+        offset = int(request.args.get("offset", 0))
+    except (TypeError, ValueError):
+        offset = 0
+    limit = min(max(limit, 1), 1000)
+    offset = max(offset, 0)
+    items, total = query_events(
+        action=request.args.get("action"),
+        src_ip=request.args.get("src_ip"),
+        rule_id=request.args.get("rule_id"),
+        limit=limit,
+        offset=offset,
+    )
+    return jsonify(
+        {
+            "items": items,
+            "total": total,
+            "limit": limit,
+            "offset": offset,
+        }
+    )
 
 
 @core_bp.route("/api/alerts", methods=["GET"])

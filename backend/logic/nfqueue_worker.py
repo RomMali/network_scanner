@@ -86,14 +86,14 @@ class IpsWorker:
                 pass
             self._nfq = None
 
-    def _run_mock(self) -> None:
-        while not self._stop.wait(0.2):
+    def _run_mock(self, stop_event: threading.Event) -> None:
+        while not stop_event.wait(0.2):
             pass
 
-    def _loop(self, generation: int) -> None:
+    def _loop(self, generation: int, stop_event: threading.Event) -> None:
         try:
             if self.mock:
-                self._run_mock()
+                self._run_mock(stop_event)
             else:
                 self._run_real()
         except Exception as exc:
@@ -124,7 +124,7 @@ class IpsWorker:
             if self.running:
                 return {"status": "already running", "ok": False}
             self.mock = _use_mock()
-            self._stop.clear()
+            self._stop = threading.Event()
             self._bind_signals()
             if not self.mock:
                 nft_hook.install(self.queue_num)
@@ -133,8 +133,12 @@ class IpsWorker:
             self.running = True
             self._generation += 1
             generation = self._generation
+            stop_event = self._stop
             self._thread = threading.Thread(
-                target=self._loop, args=(generation,), name="nfqueue-worker", daemon=True
+                target=self._loop,
+                args=(generation, stop_event),
+                name="nfqueue-worker",
+                daemon=True,
             )
             self._thread.start()
             log_system_event(f"IPS worker started mock={self.mock} queue={self.queue_num}")
