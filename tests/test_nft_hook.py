@@ -1,4 +1,4 @@
-from backend.logic.nft_hook import _forward_nfqueue_args
+from backend.logic.nft_hook import COMMENT, _forward_nfqueue_args
 
 
 def test_hook_targets_forward_nfqueue_not_input():
@@ -7,3 +7,4 @@ def test_hook_targets_forward_nfqueue_not_input():
     assert "NFQUEUE" in args
     assert "INPUT" not in args
     assert "--queue-num" in args
+    assert COMMENT in args
