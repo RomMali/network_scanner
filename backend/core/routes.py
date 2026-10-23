@@ -5,7 +5,14 @@ from backend.logic.event_log import format_text, get_events
 from backend.logic.heuristics import engine as heuristics_engine
 from backend.logic.ml_pipeline import get_alerts
 from backend.logic.nfqueue_worker import worker
-from backend.logic.rules import delete_rule, list_rules, upsert_rule
+from backend.logic.rules import (
+    approve_ml_proposal,
+    delete_rule,
+    list_ml_proposals,
+    list_rules,
+    reject_ml_proposal,
+    upsert_rule,
+)
 from db.json_storage import json_storage
 from db.json_storage.json_storage import (
     ATTACKS_FILE,
@@ -218,3 +225,32 @@ def api_heuristics_put():
         return jsonify(heuristics_engine.update_config(body)), 200
     except (TypeError, ValueError) as exc:
         return jsonify({"error": str(exc)}), 400
+
+
+@core_bp.route("/api/ml/proposals", methods=["GET"])
+def api_ml_proposals():
+    return jsonify(list_ml_proposals()), 200
+
+
+@core_bp.route("/api/ml/proposals/<rule_id>/approve", methods=["POST"])
+@jwt_required()
+def api_ml_proposal_approve(rule_id):
+    denied = _require_advanced()
+    if denied:
+        return denied
+    updated = approve_ml_proposal(rule_id)
+    if not updated:
+        return jsonify({"error": "Not found"}), 404
+    return jsonify(updated), 200
+
+
+@core_bp.route("/api/ml/proposals/<rule_id>/reject", methods=["POST"])
+@jwt_required()
+def api_ml_proposal_reject(rule_id):
+    denied = _require_advanced()
+    if denied:
+        return denied
+    deleted = reject_ml_proposal(rule_id)
+    if not deleted:
+        return jsonify({"error": "Not found"}), 404
+    return jsonify(deleted), 200

@@ -34,5 +34,17 @@
         "username": "heur_std",
         "password_hash": "$2b$12$kFx7BI/1UZSvuC7qHW4xpuoAJY2PzuoAD0Ppa5LajXN2gi6R3y8W2",
         "advanced_mode": false
+    },
+    {
+        "id": 7,
+        "username": "ml_std",
+        "password_hash": "$2b$12$8fKSaAJ8hO8kagni4pw3VuTDxRu1AxFhAqqb.TujUCt4Lt63bPp6S",
+        "advanced_mode": false
+    },
+    {
+        "id": 8,
+        "username": "ml_adv",
+        "password_hash": "$2b$12$19xf25ZEs2nia4396sCgAuaOierbVqF0ahwm2Bo17ew5rcvPgoXUS",
+        "advanced_mode": true
     }
 ]

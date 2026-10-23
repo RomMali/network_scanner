@@ -37,6 +37,7 @@ class IpsWorker:
         self.mock = False
         self._lock = threading.Lock()
         self._signals_bound = False
+        self._generation = 0
 
     def process_payload(self, payload: bytes, hw_addr=None) -> str:
         meta = parse_ipv4_5tuple(payload)
@@ -89,7 +90,7 @@ class IpsWorker:
         while not self._stop.wait(0.2):
             pass
 
-    def _loop(self) -> None:
+    def _loop(self, generation: int) -> None:
         try:
             if self.mock:
                 self._run_mock()
@@ -98,9 +99,10 @@ class IpsWorker:
         except Exception as exc:
             log_system_event(f"NFQUEUE worker error: {exc}")
         finally:
-            nft_hook.remove(self.queue_num)
-            self.running = False
-            log_system_event("IPS worker stopped (fail-open: NFQUEUE rules removed)")
+            if generation == self._generation:
+                nft_hook.remove(self.queue_num)
+                self.running = False
+                log_system_event("IPS worker stopped (fail-open: NFQUEUE rules removed)")
 
     def _bind_signals(self) -> None:
         if self._signals_bound:
@@ -129,7 +131,11 @@ class IpsWorker:
             else:
                 log_system_event("IPS worker starting in NFQUEUE_MOCK mode")
             self.running = True
-            self._thread = threading.Thread(target=self._loop, name="nfqueue-worker", daemon=True)
+            self._generation += 1
+            generation = self._generation
+            self._thread = threading.Thread(
+                target=self._loop, args=(generation,), name="nfqueue-worker", daemon=True
+            )
             self._thread.start()
             log_system_event(f"IPS worker started mock={self.mock} queue={self.queue_num}")
             return {"status": "running", "ok": True, "mock": self.mock}

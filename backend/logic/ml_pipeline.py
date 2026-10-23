@@ -6,6 +6,7 @@ import math
 import os
 import queue
 import threading
+import time
 from collections import defaultdict, deque
 from datetime import datetime, timezone
 from pathlib import Path
@@ -26,6 +27,9 @@ _thread: Optional[threading.Thread] = None
 _src_rates: Dict[str, Deque[float]] = defaultdict(lambda: deque(maxlen=256))
 _src_dsts: Dict[str, Deque[str]] = defaultdict(lambda: deque(maxlen=256))
 _src_ports: Dict[str, Deque[int]] = defaultdict(lambda: deque(maxlen=256))
+suspicious_sources: Dict[str, Deque[float]] = defaultdict(deque)
+ANOMALY_WINDOW_SECONDS = 60.0
+ANOMALY_PROPOSE_THRESHOLD = 5
 
 
 def _zscore(values: List[float], current: float) -> float:
@@ -126,31 +130,34 @@ def _handle(item: Dict[str, Any]) -> None:
                 "isolation_score": iso,
             }
         )
-        _maybe_propose_signature(src)
+        record_anomaly(src, now=now, reason=row["reason"], zscore=z, isolation_score=iso)
 
 
-def _maybe_propose_signature(src: str) -> None:
+def record_anomaly(
+    src: str,
+    now: Optional[float] = None,
+    reason: str = "ml_anomaly",
+    zscore: Optional[float] = None,
+    isolation_score: Optional[float] = None,
+) -> Optional[Dict[str, Any]]:
+    """Count anomalies per src in a 60s window; propose a disabled rule at threshold."""
+    ts = time.time() if now is None else now
     with _alert_lock:
-        count = sum(1 for a in ALERTS if a.get("src") == src and a.get("anomaly"))
-    if count < 5:
-        return
-    from backend.logic.rules import list_rules, upsert_rule
+        window = suspicious_sources[src]
+        window.append(ts)
+        cutoff = ts - ANOMALY_WINDOW_SECONDS
+        while window and window[0] <= cutoff:
+            window.popleft()
+        count = len(window)
+        if count < ANOMALY_PROPOSE_THRESHOLD:
+            return None
+    from backend.logic.rules import propose_ml_rule
 
-    for r in list_rules():
-        if r.get("src") == f"{src}/32" and r.get("enabled") is False and r.get("proposed"):
-            return
-    upsert_rule(
-        {
-            "priority": 50,
-            "action": "deny",
-            "src": f"{src}/32",
-            "dst": "any",
-            "proto": "any",
-            "enabled": False,
-            "proposed": True,
-            "reason": "ml_proposed_signature",
-        }
+    detail = (
+        f"{reason} count={count} window={int(ANOMALY_WINDOW_SECONDS)}s "
+        f"zscore={zscore} isolation_score={isolation_score}"
     )
+    return propose_ml_rule(src, detail)
 
 
 def _loop() -> None:
@@ -212,6 +219,7 @@ def get_alerts(limit: int = 100) -> List[Dict[str, Any]]:
 def reset_ml() -> None:
     with _alert_lock:
         ALERTS.clear()
+        suspicious_sources.clear()
     _src_rates.clear()
     _src_dsts.clear()
     _src_ports.clear()

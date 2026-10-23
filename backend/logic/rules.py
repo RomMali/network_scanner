@@ -4,7 +4,9 @@ from __future__ import annotations
 import ipaddress
 import os
 import threading
+import uuid
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from backend.logic.packet_parse import PacketMeta
@@ -23,9 +25,24 @@ def _rules_path() -> str:
     return str(DATA_DIR / RULES_FILE)
 
 
+def _ids_equal(left: Any, right: Any) -> bool:
+    return str(left) == str(right)
+
+
+def _as_int_id(value: Any) -> Optional[int]:
+    if isinstance(value, bool) or value is None or value == "":
+        return None
+    if isinstance(value, int):
+        return value
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
 @dataclass
 class CompiledRule:
-    id: int
+    id: Any
     priority: int
     action: str
     enabled: bool
@@ -70,15 +87,20 @@ def _parse_net(value: Any) -> Optional[ipaddress._BaseNetwork]:
 
 
 def compile_rule(entry: Dict[str, Any]) -> CompiledRule:
-    action = str(entry.get("action", "deny")).lower()
-    if action not in ("allow", "deny"):
+    action_raw = str(entry.get("action", "deny")).lower()
+    if action_raw in ("allow", "accept"):
+        action = "allow"
+    else:
         action = "deny"
+    rid = entry.get("id")
+    parsed_id = _as_int_id(rid)
+    src = entry.get("src") or entry.get("src_ip")
     return CompiledRule(
-        id=int(entry.get("id") or 0),
+        id=parsed_id if parsed_id is not None else (rid if rid not in (None, "") else 0),
         priority=int(entry.get("priority") or 0),
         action=action,
         enabled=bool(entry.get("enabled", True)),
-        src=_parse_net(entry.get("src")),
+        src=_parse_net(src),
         dst=_parse_net(entry.get("dst")),
         proto=_parse_proto(entry.get("proto")),
         sport=int(entry["sport"]) if entry.get("sport") not in (None, "", "any") else None,
@@ -130,18 +152,18 @@ def upsert_rule(payload: Dict[str, Any]) -> Dict[str, Any]:
     rules = list_rules()
     rid = payload.get("id")
     if rid is None:
-        rid = (max((int(r.get("id") or 0) for r in rules), default=0) + 1)
+        int_ids = [_as_int_id(r.get("id")) for r in rules]
+        rid = (max((i for i in int_ids if i is not None), default=0) + 1)
         payload["id"] = rid
         payload.setdefault("enabled", True)
         payload.setdefault("priority", 100)
         payload.setdefault("action", "deny")
         rules.append(payload)
     else:
-        rid = int(rid)
         payload["id"] = rid
         found = False
         for i, r in enumerate(rules):
-            if int(r.get("id") or 0) == rid:
+            if _ids_equal(r.get("id"), rid):
                 merged = dict(r)
                 merged.update(payload)
                 rules[i] = merged
@@ -155,12 +177,12 @@ def upsert_rule(payload: Dict[str, Any]) -> Dict[str, Any]:
     return payload
 
 
-def delete_rule(rule_id: int) -> Optional[Dict[str, Any]]:
+def delete_rule(rule_id: Any) -> Optional[Dict[str, Any]]:
     rules = list_rules()
     kept = []
     deleted = None
     for r in rules:
-        if int(r.get("id") or 0) == int(rule_id):
+        if _ids_equal(r.get("id"), rule_id):
             deleted = r
         else:
             kept.append(r)
@@ -168,3 +190,77 @@ def delete_rule(rule_id: int) -> Optional[Dict[str, Any]]:
         return None
     save_rules(kept)
     return deleted
+
+
+def _is_pending_ml_proposal(entry: Dict[str, Any]) -> bool:
+    meta = entry.get("metadata") if isinstance(entry.get("metadata"), dict) else {}
+    return meta.get("source") == "ml_proposal" and entry.get("enabled") is False
+
+
+def list_ml_proposals() -> List[Dict[str, Any]]:
+    return [r for r in list_rules() if _is_pending_ml_proposal(r)]
+
+
+def _has_ml_proposal_for_src(src_ip: str) -> bool:
+    needle = str(src_ip)
+    cidr = f"{src_ip}/32"
+    for r in list_rules():
+        meta = r.get("metadata") if isinstance(r.get("metadata"), dict) else {}
+        if meta.get("source") != "ml_proposal":
+            continue
+        if r.get("src_ip") == needle or r.get("src") in (needle, cidr):
+            return True
+    return False
+
+
+def propose_ml_rule(src_ip: str, reason: str) -> Optional[Dict[str, Any]]:
+    """Append a disabled DROP proposal. Returns None if one already exists for src_ip."""
+    if not src_ip:
+        raise ValueError("src_ip required")
+    with _lock:
+        if _has_ml_proposal_for_src(src_ip):
+            return None
+        rule = {
+            "id": str(uuid.uuid4()),
+            "src_ip": src_ip,
+            "src": f"{src_ip}/32",
+            "action": "DROP",
+            "enabled": False,
+            "priority": 50,
+            "description": reason,
+            "metadata": {
+                "source": "ml_proposal",
+                "proposed_at": datetime.now(timezone.utc).isoformat(),
+            },
+        }
+        rules = list_rules()
+        rules.append(rule)
+        save_rules(rules)
+        return rule
+
+
+def approve_ml_proposal(rule_id: Any) -> Optional[Dict[str, Any]]:
+    rules = list_rules()
+    updated = None
+    for i, r in enumerate(rules):
+        if _ids_equal(r.get("id"), rule_id) and _is_pending_ml_proposal(r):
+            r = dict(r)
+            r["enabled"] = True
+            rules[i] = r
+            updated = r
+            break
+    if updated is None:
+        return None
+    save_rules(rules)
+    return updated
+
+
+def reject_ml_proposal(rule_id: Any) -> Optional[Dict[str, Any]]:
+    rules = list_rules()
+    target = next(
+        (r for r in rules if _ids_equal(r.get("id"), rule_id) and _is_pending_ml_proposal(r)),
+        None,
+    )
+    if target is None:
+        return None
+    return delete_rule(rule_id)
